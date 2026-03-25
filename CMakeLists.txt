@@ -17,3 +17,7 @@ add_executable(ALTERDUNE
         src/FileLoader.cpp
         src/Game.cpp
 )
+
+# Copier automatiquement le dossier data là où l'exécutable est généré
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/data"
+        DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
