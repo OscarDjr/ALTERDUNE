@@ -6,8 +6,6 @@
 #include <algorithm>
 #include <random>
 
-// ─────── Monster (base) ───────
-
 Monster::Monster(const std::string& name, int hp, int atk, int def,
                  int mercyGoal, const std::vector<std::string>& actIds, CategoryType cat)
     : Entity(name, hp), atk(atk), def(def), mercy(0), mercyGoal(mercyGoal),
@@ -16,6 +14,8 @@ Monster::Monster(const std::string& name, int hp, int atk, int def,
 CategoryType Monster::getCategory() const { return category; }
 int Monster::getMercy()     const { return mercy; }
 int Monster::getMercyGoal() const { return mercyGoal; }
+int Monster::getAtk()       const { return atk; }   // AJOUT
+int Monster::getDef()       const { return def; }   // AJOUT
 bool Monster::canBeMercied() const { return mercy >= mercyGoal; }
 const std::vector<std::string>& Monster::getActIds() const { return actIds; }
 
@@ -48,26 +48,19 @@ std::string Monster::categoryToString(CategoryType cat) {
     return "?";
 }
 
-// ─────── NormalMonster ───────
+// ── Sous-classes ──
 
 NormalMonster::NormalMonster(const std::string& name, int hp, int atk, int def,
                              int mercyGoal, const std::vector<std::string>& actIds)
     : Monster(name, hp, atk, def, mercyGoal, actIds, CategoryType::NORMAL) {}
-
 int NormalMonster::getActCount() const { return 2; }
-
-// ─────── MiniBoss ───────
 
 MiniBoss::MiniBoss(const std::string& name, int hp, int atk, int def,
                    int mercyGoal, const std::vector<std::string>& actIds)
     : Monster(name, hp, atk, def, mercyGoal, actIds, CategoryType::MINIBOSS) {}
-
 int MiniBoss::getActCount() const { return 3; }
-
-// ─────── Boss ───────
 
 Boss::Boss(const std::string& name, int hp, int atk, int def,
            int mercyGoal, const std::vector<std::string>& actIds)
     : Monster(name, hp, atk, def, mercyGoal, actIds, CategoryType::BOSS) {}
-
 int Boss::getActCount() const { return 4; }

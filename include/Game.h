@@ -17,6 +17,8 @@ struct BestiaryEntry {
 };
 
 class Game {
+public:
+    enum class CombatResult { VICTORY_KILL, VICTORY_SPARE, DEFEAT };
 private:
     Player player;
     ActionCatalog catalog;
@@ -31,7 +33,7 @@ private:
 
     // ── Combat ──
     void startCombat();
-    bool runCombat(Monster& monster);
+    CombatResult runCombat(Monster& monster);
 
     // ── Actions combat ──
     void doFight(Monster& monster);

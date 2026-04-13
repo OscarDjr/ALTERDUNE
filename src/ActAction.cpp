@@ -11,7 +11,7 @@ ActionCatalog::ActionCatalog() {
     actions["OFFER_SNACK"] = ActAction("OFFER_SNACK", "Tu lui offres un snack mysterieux. Il hesite... puis accepte.", +35);
     actions["OBSERVE"]     = ActAction("OBSERVE",     "Tu l'observes en silence. Il se sent compris.", +10);
     actions["REASON"]      = ActAction("REASON",      "Tu lui expliques calmement que la violence ne resout rien.", +15);
-    // 2 actions a impact NEGATIF (obligatoires)
+    // 2 actions NEGATIVES
     actions["INSULT"]      = ActAction("INSULT",      "Tu l'insultes copieusement. Il te fixe, hors de lui.", -30);
     actions["MOCK"]        = ActAction("MOCK",        "Tu te moques de lui. C'etait une erreur. Une grosse erreur.", -20);
 }

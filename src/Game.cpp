@@ -5,10 +5,6 @@
 #include <random>
 #include <stdexcept>
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  Constructeur : saisie du nom + chargement des fichiers
-// ─────────────────────────────────────────────────────────────────────────────
-
 Game::Game() : player("", 100) {
     std::cout << "╔══════════════════════════════╗\n";
     std::cout << "║      A L T E R D U N E       ║\n";
@@ -19,21 +15,17 @@ Game::Game() : player("", 100) {
     if (name.empty()) name = "Joueur";
     player = Player(name, 100);
 
-    // Chargement des fichiers obligatoires
     try {
         FileLoader::loadItems("data/items.csv", player.getInventory());
     } catch (const std::exception& e) {
-        std::cerr << e.what() << "\n";
-        std::exit(1);
+        std::cerr << e.what() << "\n"; std::exit(1);
     }
     try {
         monsterPool = FileLoader::loadMonsters("data/monsters.csv", catalog);
     } catch (const std::exception& e) {
-        std::cerr << e.what() << "\n";
-        std::exit(1);
+        std::cerr << e.what() << "\n"; std::exit(1);
     }
 
-    // Résumé de démarrage
     std::cout << "\n--- Bienvenue, " << player.getName() << " ! ---\n";
     std::cout << "HP : " << player.getHp() << " / " << player.getHpMax() << "\n";
     std::cout << "Inventaire de depart :\n";
@@ -41,30 +33,16 @@ Game::Game() : player("", 100) {
     std::cout << "\n";
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  Boucle principale
-// ─────────────────────────────────────────────────────────────────────────────
-
 void Game::run() {
-    while (player.getVictories() < 10) {
+    while (player.getVictories() < 10)
         showMainMenu();
-    }
     showEnding();
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  Menu principal
-// ─────────────────────────────────────────────────────────────────────────────
 
 void Game::showMainMenu() {
     std::cout << "\n=== MENU PRINCIPAL ===\n";
     std::cout << "Victoires : " << player.getVictories() << " / 10\n\n";
-    std::cout << "1. Bestiaire\n";
-    std::cout << "2. Demarrer un combat\n";
-    std::cout << "3. Statistiques du personnage\n";
-    std::cout << "4. Items\n";
-    std::cout << "5. Quitter\n";
-    std::cout << "> ";
+    std::cout << "1. Bestiaire\n2. Demarrer un combat\n3. Statistiques\n4. Items\n5. Quitter\n> ";
 
     int choice = readInt(1, 5);
     switch (choice) {
@@ -80,17 +58,12 @@ void Game::showMainMenu() {
 
 void Game::showBestiary() const {
     std::cout << "\n=== BESTIAIRE ===\n";
-    if (bestiary.empty()) {
-        std::cout << "  (Aucun monstre vaincu pour l'instant)\n";
-        return;
-    }
-    for (const auto& e : bestiary) {
+    if (bestiary.empty()) { std::cout << "  (Aucun monstre vaincu)\n"; return; }
+    for (const auto& e : bestiary)
         std::cout << "  [" << e.category << "] " << e.name
-                  << " | HP max: " << e.hpMax
-                  << " | ATK: " << e.atk
+                  << " | HP max: " << e.hpMax << " | ATK: " << e.atk
                   << " | DEF: " << e.def
                   << " | " << (e.killed ? "Tue" : "Epargne") << "\n";
-    }
 }
 
 void Game::showPlayerStats() const {
@@ -101,75 +74,58 @@ void Game::showPlayerStats() const {
 void Game::showItems() {
     std::cout << "\n=== INVENTAIRE ===\n";
     player.getInventory().display();
-
     if (player.getInventory().isEmpty()) return;
-
     std::cout << "Utiliser un item ? (0 = non) : ";
     int choice = readInt(0, player.getInventory().size());
     if (choice > 0)
         player.getInventory().useItem(choice - 1, player);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  Combat
-// ─────────────────────────────────────────────────────────────────────────────
-
 void Game::startCombat() {
-    Monster* monster = pickRandomMonster();
-    if (!monster) {
-        std::cout << "Aucun monstre disponible !\n";
-        return;
-    }
+    Monster* base = pickRandomMonster();
+    if (!base) { std::cout << "Aucun monstre disponible !\n"; return; }
 
+    auto monster = base->clone();
     std::cout << "\n~~~ Un " << Monster::categoryToString(monster->getCategory())
               << " apparait : " << monster->getName() << " ! ~~~\n";
     monster->displayStats();
 
-    bool playerWon = runCombat(*monster);
+    CombatResult result = runCombat(*monster);  // ← CombatResult, plus bool
 
-    if (!playerWon) {
+    if (result == CombatResult::DEFEAT) {
         std::cout << "\n*** Vous avez ete vaincu. Game Over. ***\n";
         std::exit(0);
     }
 }
 
-bool Game::runCombat(Monster& monster) {
+Game::CombatResult Game::runCombat(Monster& monster) {  // ← Game::CombatResult
     bool combatOver = false;
     bool mercied    = false;
 
     while (!combatOver) {
-        // ── Affichage état ──
         std::cout << "\n--- Tour de combat ---\n";
         std::cout << "[Joueur] HP: " << player.getHp() << "/" << player.getHpMax() << "\n";
         monster.displayStats();
-
-        // ── Menu du joueur ──
         std::cout << "\n  1. FIGHT  2. ACT  3. ITEM  4. MERCY\n> ";
-        int action = readInt(1, 4);
 
-        switch (action) {
+        switch (readInt(1, 4)) {
             case 1: doFight(monster); break;
             case 2: doAct(monster);   break;
             case 3: doItem();         break;
             case 4: doMercy(monster, combatOver, mercied); break;
         }
 
-        // Vérifier si le monstre est mort après FIGHT
         if (!monster.isAlive() && !combatOver) {
             combatOver = true;
             mercied    = false;
         }
 
-        // ── Tour du monstre ──
         if (!combatOver && monster.isAlive()) {
             monster.attack(player);
-            if (!player.isAlive()) {
-                return false; // défaite
-            }
+            if (!player.isAlive()) return CombatResult::DEFEAT;
         }
     }
 
-    // Victoire
     player.addVictory();
     if (mercied) {
         player.addSpared();
@@ -179,17 +135,17 @@ bool Game::runCombat(Monster& monster) {
         std::cout << "\n*** " << monster.getName() << " a ete vaincu ! ***\n";
     }
 
-    // Ajout au bestiaire
     bestiary.push_back({
         monster.getName(),
         Monster::categoryToString(monster.getCategory()),
         monster.getHpMax(),
-        0, 0, // atk/def non exposés publiquement (simplification)
+        monster.getAtk(),
+        monster.getDef(),
         !mercied
     });
 
     std::cout << "Victoires : " << player.getVictories() << " / 10\n";
-    return true;
+    return mercied ? CombatResult::VICTORY_SPARE : CombatResult::VICTORY_KILL;
 }
 
 void Game::doFight(Monster& monster) {
@@ -207,13 +163,11 @@ void Game::doAct(Monster& monster) {
     int count = std::min((int)actIds.size(), monster.getActCount());
 
     std::cout << "\n=== Actions ACT ===\n";
-    for (int i = 0; i < count; ++i) {
+    for (int i = 0; i < count; ++i)
         std::cout << "  " << i + 1 << ". " << actIds[i] << "\n";
-    }
     std::cout << "> ";
-    int choice = readInt(1, count);
 
-    const ActAction& act = catalog.getAction(actIds[choice - 1]);
+    const ActAction& act = catalog.getAction(actIds[readInt(1, count) - 1]);
     std::cout << "\n>> " << act.text << "\n";
     monster.applyMercyImpact(act.mercyImpact);
     std::cout << "Mercy : " << monster.getMercy() << " / " << monster.getMercyGoal() << "\n";
@@ -221,8 +175,7 @@ void Game::doAct(Monster& monster) {
 
 void Game::doItem() {
     if (player.getInventory().isEmpty()) {
-        std::cout << "Votre inventaire est vide !\n";
-        return;
+        std::cout << "Votre inventaire est vide !\n"; return;
     }
     std::cout << "\n=== Inventaire ===\n";
     player.getInventory().display();
@@ -234,36 +187,24 @@ void Game::doItem() {
 
 void Game::doMercy(Monster& monster, bool& combatOver, bool& mercied) {
     if (!monster.canBeMercied()) {
-        std::cout << "Le monstre n'est pas encore pret a etre epargne. "
-                  << "(Mercy : " << monster.getMercy() << " / " << monster.getMercyGoal() << ")\n";
+        std::cout << "Le monstre n'est pas pret. (Mercy : "
+                  << monster.getMercy() << " / " << monster.getMercyGoal() << ")\n";
         return;
     }
     combatOver = true;
     mercied    = true;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  Fin de partie
-// ─────────────────────────────────────────────────────────────────────────────
-
 void Game::showEnding() const {
     std::string ending = player.checkEnding();
     std::cout << "\n╔══════════════════════════════╗\n";
-    std::cout << "║         FIN DE PARTIE          ║\n";
+    std::cout << "║         FIN DE PARTIE         ║\n";
     std::cout << "╚══════════════════════════════╝\n";
-    std::cout << "Joueur : " << player.getName() << "\n";
-    std::cout << ending << "\n";
-    if (ending == "Fin Genocidaire")
-        std::cout << "Vous avez elimine tout le monde. L'Alterdune tremble.\n";
-    else if (ending == "Fin Pacifiste")
-        std::cout << "Vous avez epargne chaque ame. La paix regne.\n";
-    else
-        std::cout << "Ni tout noir ni tout blanc. Une legende a votre image.\n";
+    std::cout << "Joueur : " << player.getName() << "\n" << ending << "\n";
+    if      (ending == "Fin Genocidaire") std::cout << "Vous avez elimine tout le monde.\n";
+    else if (ending == "Fin Pacifiste")   std::cout << "Vous avez epargne chaque ame.\n";
+    else                                  std::cout << "Ni tout noir ni tout blanc.\n";
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  Utilitaires
-// ─────────────────────────────────────────────────────────────────────────────
 
 Monster* Game::pickRandomMonster() {
     if (monsterPool.empty()) return nullptr;
@@ -279,8 +220,7 @@ int Game::readInt(int min, int max) const {
         if (std::cin.fail() || val < min || val > max) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Choix invalide, entrez un nombre entre "
-                      << min << " et " << max << " : ";
+            std::cout << "Entre " << min << " et " << max << " : ";
         } else {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             return val;
