@@ -20,7 +20,7 @@ private:
     void playerTurn(bool& combatOver);
     void doFight();
     void doAct();
-    void doItem();
+    bool doItem();
     void doMercy(bool& combatOver);
 
     int readInt(int min, int max) const;

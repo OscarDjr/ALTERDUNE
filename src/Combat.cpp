@@ -37,7 +37,9 @@ void Combat::playerTurn(bool& combatOver) {
     switch (choice) {
         case 1: doFight(); break;
         case 2: doAct();   break;
-        case 3: doItem();  break;
+        case 3:
+            if (!doItem()) playerTurn(combatOver);  // tour rejoué
+            break;
         case 4: doMercy(combatOver); break;
     }
 }
@@ -78,14 +80,17 @@ void Combat::doAct() {
     std::cout << "Mercy : " << monster.getMercy() << " / " << monster.getMercyGoal() << "\n";
 }
 
-void Combat::doItem() {
+bool Combat::doItem() {
     if (player.getInventory().isEmpty()) {
-        std::cout << "Inventaire vide !\n"; return;
+        std::cout << "Inventaire vide !\n";
+        return false;
     }
     player.getInventory().display();
     std::cout << "(0 = annuler) > ";
     int choice = readInt(0, player.getInventory().size());
-    if (choice > 0) player.getInventory().useItem(choice - 1, player);
+    if (choice == 0) return false;
+    player.getInventory().useItem(choice - 1, player);
+    return true;
 }
 
 void Combat::doMercy(bool& combatOver) {

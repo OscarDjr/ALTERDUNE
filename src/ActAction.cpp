@@ -14,6 +14,13 @@ ActionCatalog::ActionCatalog() {
     // 2 actions NEGATIVES
     actions["INSULT"]      = ActAction("INSULT",      "Tu l'insultes copieusement. Il te fixe, hors de lui.", -30);
     actions["MOCK"]        = ActAction("MOCK",        "Tu te moques de lui. C'etait une erreur. Une grosse erreur.", -20);
+    actions["SING"]        = ActAction("SING",        "Tu entonnes une chanson fausse. Le monstre est touche.", +15);
+    actions["APOLOGIZE"]   = ActAction("APOLOGIZE",   "Tu t'excuses pour tout et n'importe quoi. Ca desarme.", +20);
+    actions["FLEX"]        = ActAction("FLEX",    "Tu fais des poses musculaires. Le monstre ricane.", +10);
+    actions["STARE"]       = ActAction("STARE",   "Tu fixes le monstre sans ciller. Malaise total.", +10);
+    actions["BOW"]         = ActAction("BOW",     "Tu t'inclines respectueusement. Il apprecie le geste.", +25);
+    actions["THREATEN"]    = ActAction("THREATEN","Tu menaces le monstre betement. Il se vexe.", -25);
+    actions["YELL"]        = ActAction("YELL",    "Tu cries sans raison. Le monstre est agace.", -15);
 }
 
 bool ActionCatalog::hasAction(const std::string& id) const {

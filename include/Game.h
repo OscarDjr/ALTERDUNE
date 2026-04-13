@@ -4,6 +4,7 @@
 #include "ActAction.h"
 #include <vector>
 #include <memory>
+#include <set>
 
 struct BestiaryEntry {
     std::string name;
@@ -19,7 +20,8 @@ private:
     Player player;
     std::vector<std::unique_ptr<Monster>> monsterPool;
     std::vector<BestiaryEntry> bestiary;
-    ActionCatalog catalog;  
+    std::set<std::string> defeatedMonsters;
+    ActionCatalog catalog;
 
     void showMainMenu();
     void startCombat();

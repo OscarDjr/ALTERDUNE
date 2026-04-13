@@ -20,6 +20,8 @@ public:
 
     void takeDamage(int dmg);
     void heal(int amount);
+    void addAtk(int amount) { atk += amount; }
+    void addDef(int amount) { def += amount; }
 
     virtual void displayStats() const = 0;
 };

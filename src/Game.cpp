@@ -65,6 +65,7 @@ void Game::startCombat() {
 
     // --- GESTION DES RECOMPENSES ---
     player.addVictory();
+    defeatedMonsters.insert(monster->getName());
     bool killed = (res == Combat::Result::VICTORY_KILL);
 
     if (killed) {
@@ -74,6 +75,12 @@ void Game::startCombat() {
         player.addSpared();
         std::cout << "\n*** " << monster->getName() << " a ete epargne ! ***\n";
     }
+
+    // --- PROGRESSION ---
+    player.addAtk(2);
+    player.addDef(5);
+    std::cout << "  [+] ATK : " << player.getAtk() << " (+2)\n"
+              << "  [+] DEF : " << player.getDef() << "% (+5)\n";
 
     bestiary.push_back({
         monster->getName(),
@@ -107,10 +114,15 @@ void Game::showEnding() const {
 }
 
 Monster* Game::pickRandomMonster() {
-    if (monsterPool.empty()) return nullptr;
+    std::vector<Monster*> available;
+    for (auto& m : monsterPool)
+        if (defeatedMonsters.find(m->getName()) == defeatedMonsters.end())
+            available.push_back(m.get());
+
+    if (available.empty()) return nullptr;
     static std::mt19937 rng(std::random_device{}());
-    std::uniform_int_distribution<int> dist(0, (int)monsterPool.size() - 1);
-    return monsterPool[dist(rng)].get();
+    std::uniform_int_distribution<int> dist(0, (int)available.size() - 1);
+    return available[dist(rng)];
 }
 
 int Game::readInt(int min, int max) const {
