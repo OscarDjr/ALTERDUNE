@@ -1,8 +1,8 @@
 #include "Player.h"
 #include <iostream>
 
-Player::Player(const std::string& name, int hpMax)
-    : Entity(name, hpMax), kills(0), spared(0), victories(0) {}
+Player::Player(const std::string& name)
+    : Entity(name, PLAYER_HP, BASE_ATK, BASE_DEF), kills(0), spared(0), victories(0) {}
 
 int Player::getKills()     const { return kills; }
 int Player::getSpared()    const { return spared; }
@@ -20,9 +20,19 @@ std::string Player::checkEnding() const {
 }
 
 void Player::displayStats() const {
-    std::cout << "=== " << name << " ===\n"
-              << "HP        : " << hp << " / " << hpMax << "\n"
-              << "Victoires : " << victories << " / 10\n"
-              << "Tues      : " << kills     << "\n"
-              << "Epargnes  : " << spared    << "\n";
+    std::cout << "\n╔══════════════════════════════════════════════╗\n";
+    std::cout << "║             PROFIL DE L'AME                  ║\n";
+    std::cout << "╠══════════════════════════════════════════════╝\n";
+    std::cout << "║  Nom       : " << name << "\n";
+    std::cout << "║  Sante     : " << hp << " / " << hpMax << " HP\n";
+    std::cout << "║\n";
+    std::cout << "║  FORCE (ATK) : " << atk << " (Variation: +/- 50%)\n";
+    std::cout << "║  PLAGE DEGATS: [" << static_cast<int>(atk * 0.5) << " - " << static_cast<int>(atk * 1.5) << "]\n";
+    std::cout << "║  ARMURE(DEF) : " << def << "% de reduction\n";
+    std::cout << "║\n";
+    std::cout << "║  PALMARES :\n";
+    std::cout << "║  - Monstres vaincus  : " << victories << "\n";
+    std::cout << "║  - Morts causees     : " << kills << "\n";
+    std::cout << "║  - Ames epargnees    : " << spared << "\n";
+    std::cout << "╚══════════════════════════════════════════════╝\n";
 }
