@@ -9,9 +9,8 @@ ActionCatalog::ActionCatalog() {
     actions["PET"]         = ActAction("PET",         "Tu tentes de le caresser. Contre toute attente, il apprecie.", +30);
     actions["DANCE"]       = ActAction("DANCE",       "Tu danses le macarena. Le monstre applaudit maladroitement.", +20);
     actions["OFFER_SNACK"] = ActAction("OFFER_SNACK", "Tu lui offres un snack mysterieux. Il hesite... puis accepte.", +35);
-    actions["OBSERVE"]     = ActAction("OBSERVE",     "Tu l'observes en silence. Il se sent compris.", +10);
+    actions["OBSERVE"]     = ActAction("OBSERVE",     "Tu l'observes en silence.", +0);
     actions["REASON"]      = ActAction("REASON",      "Tu lui expliques calmement que la violence ne resout rien.", +15);
-    // 2 actions NEGATIVES
     actions["INSULT"]      = ActAction("INSULT",      "Tu l'insultes copieusement. Il te fixe, hors de lui.", -30);
     actions["MOCK"]        = ActAction("MOCK",        "Tu te moques de lui. C'etait une erreur. Une grosse erreur.", -20);
     actions["SING"]        = ActAction("SING",        "Tu entonnes une chanson fausse. Le monstre est touche.", +15);

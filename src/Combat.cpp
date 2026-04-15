@@ -71,13 +71,18 @@ void Combat::doAct() {
     std::cout << "\n=== Actions ACT ===\n";
     for (int i = 0; i < count; ++i)
         std::cout << "  " << i + 1 << ". " << actIds[i] << "\n";
-    
+
     int choice = readInt(1, count);
     const ActAction& act = catalog.getAction(actIds[choice - 1]);
-    
-    std::cout << "\n>> " << act.text << "\n";
+
+    int before = monster.getMercy();
     monster.applyMercyImpact(act.mercyImpact);
-    std::cout << "Mercy : " << monster.getMercy() << " / " << monster.getMercyGoal() << "\n";
+    int after = monster.getMercy();
+    int delta = after - before;
+
+    std::cout << "\n>> " << act.text << "\n";
+    std::cout << "Mercy : " << after << "%"
+              << "  (" << (delta >= 0 ? "+" : "") << delta << ")\n";
 }
 
 bool Combat::doItem() {
@@ -94,14 +99,20 @@ bool Combat::doItem() {
 }
 
 void Combat::doMercy(bool& combatOver) {
-    if (monster.canBeMercied()) {
+    static std::mt19937 rng(std::random_device{}());
+    std::uniform_int_distribution<int> dist(1, 100);
+
+    int roll = dist(rng);
+    int mercy = monster.getMercy();
+
+    if (roll <= mercy) {
+        std::cout << "\nLe monstre accepte d'etre epargne. (chance que ça soit arrivé : " << mercy << "%)\n";
         combatOver = true;
         mercied = true;
     } else {
-        std::cout << "Le monstre n'est pas pret a t'ecouter...\n";
+        std::cout << "\nLe monstre refuse... (chance que ça soit arrivé : " << 100-mercy << "%)\n";
     }
 }
-
 int Combat::readInt(int min, int max) const {
     int val;
     while (!(std::cin >> val) || val < min || val > max) {

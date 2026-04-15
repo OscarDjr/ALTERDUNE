@@ -102,11 +102,9 @@ void Game::showBestiary() const {
 void Game::showPlayerStats() const { player.displayStats(); }
 
 void Game::showItems() {
+    std::cout << "\n=== INVENTAIRE ===\n";
     player.getInventory().display();
-    if (player.getInventory().isEmpty()) return;
-    std::cout << "Utiliser un item (0=annuler) : ";
-    int choice = readInt(0, player.getInventory().size());
-    if (choice > 0) player.getInventory().useItem(choice - 1, player);
+    std::cout << "(Impossible d'utiliser un item hors combat.)\n";
 }
 
 void Game::showEnding() const {
