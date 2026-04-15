@@ -4,47 +4,35 @@
 #include "ActAction.h"
 #include <vector>
 #include <memory>
-#include <string>
+#include <set>
 
-// Entrée du bestiaire : monstre vaincu + résultat
 struct BestiaryEntry {
     std::string name;
     std::string category;
     int hpMax;
     int atk;
     int def;
-    bool killed; // true = tué, false = épargné
+    bool killed;
 };
 
 class Game {
 private:
     Player player;
-    ActionCatalog catalog;
     std::vector<std::unique_ptr<Monster>> monsterPool;
     std::vector<BestiaryEntry> bestiary;
+    std::set<std::string> defeatedMonsters;
+    ActionCatalog catalog;
 
-    // ── Menus ──
     void showMainMenu();
-    void showBestiary()    const;
+    void startCombat();
+    void showBestiary() const;
     void showPlayerStats() const;
     void showItems();
-
-    // ── Combat ──
-    void startCombat();
-    bool runCombat(Monster& monster);
-
-    // ── Actions combat ──
-    void doFight(Monster& monster);
-    void doAct(Monster& monster);
-    void doItem();
-    void doMercy(Monster& monster, bool& combatOver, bool& mercied);
-
-    // ── Fin de partie ──
     void showEnding() const;
 
-    // ── Utilitaires ──
     Monster* pickRandomMonster();
     int readInt(int min, int max) const;
+
 public:
     Game();
     void run();

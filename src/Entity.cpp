@@ -2,8 +2,8 @@
 #include <iostream>
 #include <algorithm>
 
-Entity::Entity(const std::string& name, int hpMax)
-    : name(name), hp(hpMax), hpMax(hpMax) {}
+Entity::Entity(const std::string& name, int hpMax, int atk, int def)
+    : name(name), hp(hpMax), hpMax(hpMax), atk(atk), def(def) {}
 
 std::string Entity::getName() const { return name; }
 int Entity::getHp()    const { return hp; }

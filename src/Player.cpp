@@ -1,8 +1,9 @@
 #include "Player.h"
 #include <iostream>
+#include <iomanip>
 
-Player::Player(const std::string& name, int hpMax)
-    : Entity(name, hpMax), kills(0), spared(0), victories(0) {}
+Player::Player(const std::string& name)
+    : Entity(name, PLAYER_HP, BASE_ATK, BASE_DEF), kills(0), spared(0), victories(0) {}
 
 int Player::getKills()     const { return kills; }
 int Player::getSpared()    const { return spared; }
@@ -20,9 +21,23 @@ std::string Player::checkEnding() const {
 }
 
 void Player::displayStats() const {
-    std::cout << "=== " << name << " ===\n"
-              << "HP        : " << hp << " / " << hpMax << "\n"
-              << "Victoires : " << victories << " / 10\n"
-              << "Tues      : " << kills     << "\n"
-              << "Epargnes  : " << spared    << "\n";
+    float var = Player::getVariance();
+    std::string bar = "";
+    int filled = (hpMax > 0) ? (hp * 20 / hpMax) : 0;
+    for (int i = 0; i < 20; ++i) bar += (i < filled ? "#" : "-");
+
+    std::cout << "\n"
+              << "  ======================================\n"
+              << "        PROFIL DE L'AVENTURIER\n"
+              << "  ======================================\n"
+              << "  Nom        : " << name << "\n"
+              << "  --------------------------------------\n"
+              << "  HP         : " << hp << " / " << hpMax << "\n"
+              << "  Vie        : [" << bar << "]\n"
+              << "  Attaque    : " << atk << "  (Var : +/-" << (int)(var * 100) << "%)\n"
+              << "  Defense    : " << def << "%\n"
+              << "  --------------------------------------\n"
+              << "  Victoires  : " << victories << " / 10\n"
+              << "  Tues       : " << kills << "   |   Epargnes : " << spared << "\n"
+              << "  ======================================\n\n";
 }

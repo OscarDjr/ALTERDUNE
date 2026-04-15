@@ -16,6 +16,8 @@ add_executable(ALTERDUNE
         src/Inventory.cpp
         src/FileLoader.cpp
         src/Game.cpp
+        include/Combat.h
+        src/Combat.cpp
 )
 
 # Copier automatiquement le dossier data là où l'exécutable est généré
