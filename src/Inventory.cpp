@@ -10,27 +10,32 @@ void Inventory::addItem(const Item& item, int qty) {
             return;
         }
     }
+    // Sinon on ajoute une nouvelle ligne a la liste
     entries.push_back({item, qty});
 }
 
 bool Inventory::useItem(int index, Player& player) {
+    // Securite sur l'index (eviter les plantages)
     if (index < 0 || index >= (int)entries.size()) return false;
     auto& entry = entries[index];
     if (entry.qty <= 0) {
         std::cout << "Plus de " << entry.item.name << " disponible.\n";
         return false;
     }
+    // Effet de soin si c'est un item de type HEAL
     if (entry.item.type == ItemType::HEAL) {
         player.heal(entry.item.value);
         std::cout << "Vous utilisez " << entry.item.name
                   << " et recuperez " << entry.item.value << " HP.\n";
     }
+    // On baisse le stock et on vire l'item de la liste si c'est le dernier
     --entry.qty;
     if (entry.qty == 0)
         entries.erase(entries.begin() + index);
     return true;
 }
 
+// Affiche le contenu actuel du sac
 void Inventory::display() const {
     if (entries.empty()) {
         std::cout << "  (inventaire vide)\n";

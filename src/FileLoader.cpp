@@ -9,8 +9,9 @@
 #include <algorithm>
 #include <cctype>
 
-// ─── Utilitaires ─────────────────────────────────────────────────────────────
+// Utilitaires
 
+// Nettoyage des espaces et retours chariots en debut/fin de chaine
 std::string FileLoader::trim(const std::string& s) {
     size_t start = s.find_first_not_of(" \t\r\n");
     if (start == std::string::npos) return "";
@@ -18,6 +19,7 @@ std::string FileLoader::trim(const std::string& s) {
     return s.substr(start, end - start + 1);
 }
 
+// Decoupage de la ligne selon le separateur (souvent ';')
 std::vector<std::string> FileLoader::split(const std::string& line, char sep) {
     std::vector<std::string> tokens;
     std::stringstream ss(line);
@@ -27,8 +29,9 @@ std::vector<std::string> FileLoader::split(const std::string& line, char sep) {
     return tokens;
 }
 
-// ─── Chargement items.csv ─────────────────────────────────────────────────────
+// Chargement items.csv
 
+// Lecture du fichier items.csv pour remplir l'inventaire
 void FileLoader::loadItems(const std::string& filename, Inventory& inventory) {
     std::ifstream file(filename);
     if (!file.is_open()) {
@@ -75,7 +78,7 @@ void FileLoader::loadItems(const std::string& filename, Inventory& inventory) {
     }
 }
 
-// ─── Chargement monsters.csv ──────────────────────────────────────────────────
+// Chargement monsters.csv
 
 std::vector<std::unique_ptr<Monster>> FileLoader::loadMonsters(
     const std::string& filename,

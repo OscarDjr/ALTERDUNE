@@ -44,6 +44,7 @@ void Game::showMainMenu() {
 }
 
 void Game::startCombat() {
+    // Spawn d'un monstre aleatoire
     Monster* base = pickRandomMonster();
     if (!base) return;
     auto monster = base->clone();
@@ -52,22 +53,23 @@ void Game::startCombat() {
               << " apparait : " << monster->getName() << " ! ~~~\n"
               << "[INFO] " << player.getName() << " (ATK: " << player.getAtk() << " | DEF: " << player.getDef() << "%)\n"
               << "[INFO] " << monster->getName() << " (ATK: " << monster->getAtk() << " | DEF: " << monster->getDef() << "%)\n";
-
-    // --- EXECUTION DU COMBAT ---
+    // Lancement du moteur de combat
     Combat encounter(player, *monster, catalog);
     Combat::Result res = encounter.start();
 
+    //fin de partie si mort
     if (res == Combat::Result::DEFEAT) {
         std::cout << "\n*** GAME OVER : " << player.getName() << " a peri... ***\n";
         std::cin.get();
         std::exit(0);
     }
 
-    // --- GESTION DES RECOMPENSES ---
+    // Stats de victoire et enregistrement nom
     player.addVictory();
     defeatedMonsters.insert(monster->getName());
     bool killed = (res == Combat::Result::VICTORY_KILL);
 
+    // Check si tue ou epargne pour l'ending
     if (killed) {
         player.addKill();
         std::cout << "\n*** " << monster->getName() << " a ete vaincu ! ***\n";
@@ -76,7 +78,6 @@ void Game::startCombat() {
         std::cout << "\n*** " << monster->getName() << " a ete epargne ! ***\n";
     }
 
-    // --- PROGRESSION ---
     player.addAtk(2);
     player.addDef(5);
     std::cout << "  [+] ATK : " << player.getAtk() << " (+2)\n"
@@ -112,11 +113,13 @@ void Game::showEnding() const {
 }
 
 Monster* Game::pickRandomMonster() {
+    // Filtrage : on ne veut pas retomber sur un monstre deja vaincu
     std::vector<Monster*> available;
     for (auto& m : monsterPool)
         if (defeatedMonsters.find(m->getName()) == defeatedMonsters.end())
             available.push_back(m.get());
 
+    // Tirage au sort avec random_device
     if (available.empty()) return nullptr;
     static std::mt19937 rng(std::random_device{}());
     std::uniform_int_distribution<int> dist(0, (int)available.size() - 1);
@@ -125,6 +128,7 @@ Monster* Game::pickRandomMonster() {
 
 int Game::readInt(int min, int max) const {
     int val;
+    // Boucle de securite contre les entrees de texte (cin.fail)
     while (!(std::cin >> val) || val < min || val > max) {
         std::cin.clear(); std::cin.ignore(10000, '\n');
         std::cout << "Choix invalide : ";
