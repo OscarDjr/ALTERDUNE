@@ -77,14 +77,14 @@ std::string Monster::categoryToString(CategoryType cat) {
 NormalMonster::NormalMonster(const std::string& name, int hp, int atk, int def,
                              int mercyGoal, const std::vector<std::string>& actIds)
     : Monster(name, hp, atk, def, mercyGoal, actIds, CategoryType::NORMAL) {}
-int NormalMonster::getActCount() const { return 2;  // 2 actions
+int NormalMonster::getActCount() const { return 2; } // 2 actions
 
 MiniBoss::MiniBoss(const std::string& name, int hp, int atk, int def,
                    int mercyGoal, const std::vector<std::string>& actIds)
     : Monster(name, hp, atk, def, mercyGoal, actIds, CategoryType::MINIBOSS) {}
-int MiniBoss::getActCount() const { return 3; } // 3 actions
+int MiniBoss::getActCount() const { return 3; } // 3actions
 
 Boss::Boss(const std::string& name, int hp, int atk, int def,
            int mercyGoal, const std::vector<std::string>& actIds)
     : Monster(name, hp, atk, def, mercyGoal, actIds, CategoryType::BOSS) {}
-int Boss::getActCount() const { return 4; } // 4 actions
+int Boss::getActCount() const { return 4; } //4actions
