@@ -88,11 +88,16 @@ void Combat::doAct() {
     // Update la jauge de Mercy du monstre
     monster.applyMercyImpact(act.mercyImpact);
     int after = monster.getMercy();
+    int goal = monster.getMercyGoal();
     int delta = after - before;
 
     std::cout << "\n>> " << act.text << "\n";
     std::cout << "Mercy : " << after << "%"
               << "  (" << (delta >= 0 ? "+" : "") << delta << "%"")\n";
+    std::string bar = "[";
+    int filled = (after * 20) / goal;
+    for (int i = 0; i < 20; ++i) bar += (i < filled ? "#" : "-");
+    std::cout << bar << "]\n";
 }
 
 bool Combat::doItem() {
