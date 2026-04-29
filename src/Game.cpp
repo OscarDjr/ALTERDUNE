@@ -95,9 +95,16 @@ void Game::startCombat() {
 
 void Game::showBestiary() const {
     std::cout << "\n=== BESTIAIRE ===\n";
-    if (bestiary.empty()) std::cout << "  (Vide)\n";
+    if (bestiary.empty()) {
+        std::cout << "  (Vide)\n";
+        return;
+    }
     for (const auto& e : bestiary)
-        std::cout << "  [" << e.category << "] " << e.name << " | " << (e.killed ? "Tue" : "Epargne") << "\n";
+        std::cout << "  [" << e.category << "] " << e.name
+                  << " | HP: " << e.hpMax
+                  << " | ATK: " << e.atk
+                  << " | DEF: " << e.def << "%"
+                  << " | " << (e.killed ? "Tue" : "Epargne") << "\n";
 }
 
 void Game::showPlayerStats() const { player.displayStats(); }

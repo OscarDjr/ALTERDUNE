@@ -92,7 +92,7 @@ void Combat::doAct() {
 
     std::cout << "\n>> " << act.text << "\n";
     std::cout << "Mercy : " << after << "%"
-              << "  (" << (delta >= 0 ? "+" : "") << delta << ")\n";
+              << "  (" << (delta >= 0 ? "+" : "") << delta << "%"")\n";
 }
 
 bool Combat::doItem() {
@@ -121,7 +121,7 @@ void Combat::doMercy(bool& combatOver) {
         combatOver = true;
         mercied = true;
     } else {
-        std::cout << "\nLe monstre refuse... (chance que ça soit arrivé : " << 100-mercy << "%)\n";
+        std::cout << "\nLe monstre refuse... (chance que le monstre refuse : " << 100-mercy << "%)\n";
     }
 }
 // Securise la saisie utilisateur

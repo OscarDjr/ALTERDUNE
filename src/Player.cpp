@@ -17,14 +17,14 @@ void Player::addKill()    { ++kills; }
 void Player::addSpared()  { ++spared; }
 void Player::addVictory() { ++victories; }
 
-// Logique de fin de jeu selon le style de jeu (Pacifiste, Neutre ou Geno)
+// Logique de fin de jeu selon le style de jeu (Pacifiste, Neutre ou Genocidaire)
 std::string Player::checkEnding() const {
     if (spared == 0) return "Fin Genocidaire";
     if (kills  == 0) return "Fin Pacifiste";
     return "Fin Neutre";
 }
 
-// Logique de fin de jeu selon le style de jeu (Pacifiste, Neutre ou Geno)
+// Affichage des stats du joueur dans la console
 void Player::displayStats() const {
     float var = Player::getVariance();
     // Calcul de la barre de vie (sur 20 caracteres)
